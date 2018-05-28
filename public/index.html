@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Script Reader</title>
+
+
+</head>
+<body>
+</body>
+
+  <script src="http://code.createjs.com/soundjs-0.5.2.min.js"></script>
+
+  <script type="text/javascript">
+	  	
+	var getJSON = function(url, callback) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', url, true);
+	    xhr.responseType = 'json';
+	    xhr.onload = function() {
+	      var status = xhr.status;
+	      if (status === 200) {
+	        callback(null, xhr.response);
+	      } else {
+	        callback(status, xhr.response);
+	      }
+	    };
+	    xhr.send();
+	};
+
+	getJSON('api/get-script',
+	function(err, data) {
+	  if (err !== null) {
+	    alert('Something went wrong: ' + err);
+	  } else {
+
+
+		var SERVER = "";
+
+	      createjs.Sound.on("fileload", handleLoad);
+	      for(var item in data) {
+	      	var file = data[item].file.replace('public/','');
+	      	createjs.Sound.registerSound(SERVER+file, item);
+	      }
+
+	      createjs.Sound.registerSound(SERVER+'audio-files/background.mp3', 'background');
+
+	      function minToMillisec(min) {
+	      	var dSplit = min.split(':');
+
+	      	return (Number(dSplit[0])*60+Number(dSplit[1]))*1000;
+	      }
+
+	      var backgroundLoaded = false;
+		 function handleLoad(event) {
+
+		 	console.log(event)
+
+		 	if(event.id == 'background')
+		 		backgroundLoaded = true;
+		 	else
+		 		data[event.id].loaded = true;
+
+		 	var allLoaded = true;
+		 	for(item in data) {
+		 		if(!data[item].loaded) allLoaded = false;
+		 	}
+
+		 	if(allLoaded && backgroundLoaded) {
+
+		 		console.log('Everything loaded. Start queueing.');
+
+				createjs.Sound.play("background", 
+		 			{
+		 				interrupt: createjs.Sound.INTERRUPT_ANY, 
+		 				loop: 0
+		 			});
+
+		 		for(item in data) {
+		 			console.log(item, minToMillisec(data[item].time))
+			 		createjs.Sound.play(item+"", 
+			 			{
+			 				interrupt: createjs.Sound.INTERRUPT_ANY, 
+			 				loop: 0,
+			 				delay: minToMillisec(data[item].time)
+			 			});
+
+		 		}
+
+		 	}
+
+
+
+		   //  createjs.Sound.play("myID");
+		     // store off AbstractSoundInstance for controlling
+		   //  var myInstance = createjs.Sound.play("myID", {interrupt: createjs.Sound.INTERRUPT_ANY, loop:0});
+		 }
+
+
+
+
+
+
+
+	  }
+	});
+
+
+  </script>
+
+</html>

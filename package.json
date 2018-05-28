@@ -1,0 +1,20 @@
+{
+  "name": "meditation-app-backend-prototype",
+  "version": "0.0.1",
+  "description": "A prototype for a new meditation app",
+  "scripts": {
+    "run-prod": "node ./server.js"
+  },
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^0.1.0",
+    "aws-sdk": "^2.241.1",
+    "crypto": "^1.0.1",
+    "csv": "^3.0.2",
+    "express": "^4.15.3",
+    "fast-csv": "^2.4.1",
+    "http": "0.0.0",
+    "promise": "^8.0.1",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {}
+}
